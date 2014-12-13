@@ -18,12 +18,12 @@ class Loggly {
    *
    * @param string $message 
    * @param string $severity optional, defaults to ERROR
-   * @param string $timestamp optional, defaults to now, must be ISO 8601 date ie. date('c')
    * @param string $tag optional, defaults to HTTP
+   * @param string $timestamp optional, defaults to now, must be ISO 8601 date ie. date('c')
    * @return bool  returns true on success else false, throws an error if HTTP request is non 200
    * @author Dave Barnwell <dave@freshsauce.co.uk>
    */
-  function log($message,$severity="ERROR",$timestamp=null,$tag='http') {
+  function log($message,$severity="ERROR",$tag='http',$timestamp=null) {
     $data = array(  // converted to json and sent to Loggly
       'message'   => $message,
       'serverity' => $severity,
