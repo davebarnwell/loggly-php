@@ -2,7 +2,6 @@
 /**
  * Log to Loggly HTTPS Event Endpoint in json format
  *
- * @package default
  * @author Dave Barnwell <dave@freshsauce.co.uk>
  */
 class Loggly {
@@ -13,7 +12,17 @@ class Loggly {
   function __construct($token) {
     $this->token = $token;
   }
-    
+  
+  /**
+   * Log to loggly over https
+   *
+   * @param string $message 
+   * @param string $severity optional, defaults to ERROR
+   * @param string $timestamp optional, defaults to now, must be ISO 8601 date ie. date('c')
+   * @param string $tag optional, defaults to HTTP
+   * @return bool  returns true on success else false, throws an error if HTTP request is non 200
+   * @author Dave Barnwell <dave@freshsauce.co.uk>
+   */
   function log($message,$severity="ERROR",$timestamp=null,$tag='http') {
     $data = array(  // converted to json and sent to Loggly
       'message'   => $message,
