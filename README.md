@@ -9,9 +9,12 @@ Usage:
 
     try {
       // do something that throws on error
+      
+      
     } catch (Exception $e) {
-      // Send error to log
+      // Send error to loggly
       $LOG->log(
-        $e->getMessage()."\n".$e->getTraceAsString()."\n");
+        $e->getMessage()."\n".$e->getTraceAsString()."\n"
+      );
     }
   
