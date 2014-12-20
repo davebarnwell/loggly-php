@@ -18,20 +18,20 @@ class Loggly {
    *
    * @param string $message 
    * @param string $severity optional, defaults to ERROR
-   * @param string $tag optional, defaults to HTTP
+   * @param string|array $tag optional, defaults to HTTP, if passed an array assumed an array of string tags
    * @param string $timestamp optional, defaults to now, must be ISO 8601 date ie. date('c')
    * @return bool  returns true on success else false, throws an error if HTTP request is non 200
    * @author Dave Barnwell <dave@freshsauce.co.uk>
    */
-  function log($message,$severity="ERROR",$tag='http',$timestamp=null) {
+  function log($message,$severity="ERROR",$tags='http',$timestamp=null) {
     $data = array(  // converted to json and sent to Loggly
       'message'   => $message,
       'serverity' => $severity,
-      'tag'       => $tag,
+      'tag'       => $tags,
       'timestamp' => ($timestamp != null) ? $timestamp : date('c')
     );
     $s = curl_init();
-    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,$tag)); 
+    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,is_array($tags) ? implode(',',$tags) : $tags)); 
     curl_setopt($s, CURLOPT_HTTPHEADER,array('Expect:')); 
     curl_setopt($s, CURLOPT_TIMEOUT,$this->_timeout); 
     curl_setopt($s, CURLOPT_MAXREDIRS,2); 
