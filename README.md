@@ -17,4 +17,13 @@ Usage:
         $e->getMessage()."\n".$e->getTraceAsString()."\n"
       );
     }
+    
+  Need to specify a few tags
+  
+    $LOG->log('error message',array('tag-one','tag-two'));
+
+
+  Need to specify the timestamp and not report as now?
+  
+    $LOG->log('error message','tag-one',date('c'));
   
