@@ -1,6 +1,6 @@
 <?php
 /**
- * Log to Loggly HTTPS Event Endpoint in json format
+ * Log to Loggly (www.loggly.com) HTTPS Event Endpoint in json format
  *
  * @author Dave Barnwell <dave@freshsauce.co.uk>
  */
