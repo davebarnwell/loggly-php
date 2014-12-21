@@ -139,7 +139,8 @@ class Loggly {
     if (!isset($data['tags'])) {
       $tags_list = 'http';
     } else {
-      $tags_list = is_array($data['tags']) ? implode(',',$data['tags']) : $data['tags'];
+      if (!is_array($data['tags'])) $data['tags'] = array($data['tags']); // convert to array
+      $tags_list = implode(',',$data['tags']);
     }
 
     $s = curl_init();
