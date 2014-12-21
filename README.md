@@ -13,7 +13,7 @@ Usage:
       
     } catch (Exception $e) {
       // Send error to loggly
-      $LOG->log(
+      $LOG->error(
         $e->getMessage()."\n".$e->getTraceAsString()."\n"
       );
     }
@@ -21,11 +21,21 @@ Usage:
   Need to specify a few tags
   
     $LOG = new Loggly(LOGGLY_TOKEN);  // once per session
-    $LOG->log('error message',array('tag-one','tag-two'));
+    $LOG->info(
+      'your message',
+      array(
+        'tags' => array('tag-one','tag-two')
+      )
+    );
 
 
   Need to specify the timestamp and not report as now?
   
     $LOG = new Loggly(LOGGLY_TOKEN);  // once per session
-    $LOG->log('error message','tag-one',date('c'));
+    $LOG->debug(
+      "your multi \n line message",
+      array(
+        'timestamp' => date('c')
+      )
+    );
   

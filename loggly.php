@@ -14,25 +14,104 @@ class Loggly {
   }
   
   /**
-   * Log to loggly over https
+   * servity=debug log wrapper around loglevel()
    *
    * @param string $message 
-   * @param string $severity optional, defaults to ERROR
-   * @param string|array $tag optional, defaults to HTTP, if passed an array assumed an array of string tags
-   * @param string $timestamp optional, defaults to now, must be ISO 8601 date ie. date('c')
-   * @return bool  returns true on success else false, throws an error if HTTP request is non 200
-   * @author Dave Barnwell <dave@freshsauce.co.uk>
+   * @param array $data associative array of data to associate with message
+   * @return bool
    */
-  function log($message,$severity="ERROR",$tags='http',$timestamp=null) {
-    $data = array(  // converted to json and sent to Loggly
-      'message'   => $message,
-      'serverity' => $severity,
-      'tag'       => $tags,
-      'timestamp' => ($timestamp != null) ? $timestamp : date('c')
-    );
-    $tags_expanded = is_array($tags) ? implode(',',$tags) : $tags;
+  function debug($message,$data=null) {
+    return $this->loglevel('DEBUG',$message,$data);
+  }
+
+  /**
+   * servity=info log wrapper around loglevel()
+   *
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function info($message,$data=null) {
+    return $this->loglevel('INFO',$message,$data);
+  }
+  
+  /**
+   * servity=warning log wrapper around loglevel()
+   *
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function warn($message,$data=null) {
+    return $this->loglevel('WARNING',$message,$data);
+  }
+  
+  /**
+   * servity=error log wrapper around loglevel()
+   *
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function error($message,$data=null) {
+    return $this->loglevel('ERROR',$message,$data);
+  }
+  
+  /**
+   * servity=critical log wrapper around loglevel()
+   *
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function critical($message,$data=null) {
+    return $this->loglevel('CRITICAL',$message,$data);
+  }
+
+  /**
+   * servity=fatal log wrapper around loglevel()
+   *
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function fatal($message,$data=null) {
+    return $this->loglevel('FATAL',$message,$data);
+  }
+  
+  /**
+   * log wrapper around log()
+   *
+   * @param string $level set as severity in data passed to loggly
+   * @param string $message 
+   * @param array $data associative array of data to associate with message
+   * @return bool
+   */
+  function loglevel($level,$message,$data=null) {
+    if (!is_array($data)) $data = array();
+    $data['message']  = $message;
+    $data['severity'] = $level;
+    return $this->log($data);
+  }
+  
+  /**
+   * Log to loggly over https
+   *
+   * @param array $data associative array converted to json and sent to loggly, at minimum key 'message' should be set, optionally timestamp (ISO 8601) can be set but will default to now, and tags member is an optional array of tags to associate with the message defaults to 'http', all other data is passed through as is to loggly.
+   * @return bool true on success, fale on fail, throws error if HTTP error or no message given
+   */
+  function log($data) {
+    if (!is_array($data)) throw new Exception("Invalid params", 1);
+    if (!isset($data['message'])) throw new Exception("No message given to log", 1);
+    $data['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : date('c');  // default timestamp if missing
+    if (!isset($data['tags'])) {
+      $tags_list = 'http';
+    } else {
+      $tags_list = is_array($data['tags']) ? implode(',',$data['tags']) : $data['tags'];
+    }
+
     $s = curl_init();
-    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,$tags_expanded)); 
+    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,$tags_list)); 
     curl_setopt($s, CURLOPT_HTTPHEADER,array('Expect:')); 
     curl_setopt($s, CURLOPT_TIMEOUT,$this->_timeout); 
     curl_setopt($s, CURLOPT_MAXREDIRS,2); 
