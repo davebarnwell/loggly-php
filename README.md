@@ -32,10 +32,12 @@ Usage:
   Need to specify the timestamp and not report as now?
   
     $LOG = new Loggly(LOGGLY_TOKEN);  // once per session
+    $LOG->enable(Loggly::DEBUG);      // enable debug messages
     $LOG->debug(
       "your multi \n line message",
       array(
         'timestamp' => date('c')
       )
     );
+    $LOG->disable(Loggly::DEBUG);      // disable future debug messages
   

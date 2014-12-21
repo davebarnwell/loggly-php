@@ -6,9 +6,16 @@
  */
 class Loggly {
   public $token;
-  private $_timeout = 10;
-  const LOGURL = 'https://logs-01.loggly.com/inputs/%s/tag/%s/';
-  
+  private $_timeout     = 10;
+  private $skip_logging = array('DEBUG'); // debug messages off by default
+  const LOGURL          = 'https://logs-01.loggly.com/inputs/%s/tag/%s/';
+  const DEBUG           = 'DEBUG';
+  const INFO            = 'INFO';
+  const WARNING         = 'WARNING';
+  const ERROR           = 'ERROR';
+  const CRITICAL        = 'CRITICAL';
+  const FATAL           = 'FATAL';
+
   function __construct($token) {
     $this->token = $token;
   }
@@ -21,7 +28,7 @@ class Loggly {
    * @return bool
    */
   function debug($message,$data=null) {
-    return $this->loglevel('DEBUG',$message,$data);
+    return $this->loglevel(self::DEBUG,$message,$data);
   }
 
   /**
@@ -32,7 +39,7 @@ class Loggly {
    * @return bool
    */
   function info($message,$data=null) {
-    return $this->loglevel('INFO',$message,$data);
+    return $this->loglevel(self::INFO,$message,$data);
   }
   
   /**
@@ -43,7 +50,7 @@ class Loggly {
    * @return bool
    */
   function warn($message,$data=null) {
-    return $this->loglevel('WARNING',$message,$data);
+    return $this->loglevel(self::WARNING,$message,$data);
   }
   
   /**
@@ -54,7 +61,7 @@ class Loggly {
    * @return bool
    */
   function error($message,$data=null) {
-    return $this->loglevel('ERROR',$message,$data);
+    return $this->loglevel(self::ERROR,$message,$data);
   }
   
   /**
@@ -65,7 +72,7 @@ class Loggly {
    * @return bool
    */
   function critical($message,$data=null) {
-    return $this->loglevel('CRITICAL',$message,$data);
+    return $this->loglevel(self::CRITICAL,$message,$data);
   }
 
   /**
@@ -76,7 +83,7 @@ class Loggly {
    * @return bool
    */
   function fatal($message,$data=null) {
-    return $this->loglevel('FATAL',$message,$data);
+    return $this->loglevel(self::FATAL,$message,$data);
   }
   
   /**
@@ -88,10 +95,35 @@ class Loggly {
    * @return bool
    */
   function loglevel($level,$message,$data=null) {
+    if (in_array($level,$this->skip_logging)) return true;  // skip levels not to log
     if (!is_array($data)) $data = array();
     $data['message']  = $message;
     $data['severity'] = $level;
     return $this->log($data);
+  }
+  
+  /**
+   * ensure future messages with specified level are logged
+   *
+   * @param string $level 
+   * @return void
+   */
+  function enable($level) {
+    if (($key = array_search($level, $this->skip_logging)) !== false) {
+      unset($this->skip_logging[$key]);
+    }
+  }
+  
+  /**
+   * don't log future messages with specified level
+   *
+   * @param string $level 
+   * @return void
+   */
+  function disable($level) {
+    if (!in_array($level,$this->skip_logging)) {
+      $this->skip_logging[] = $level;
+    }
   }
   
   /**
