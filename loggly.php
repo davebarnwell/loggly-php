@@ -30,8 +30,9 @@ class Loggly {
       'tag'       => $tags,
       'timestamp' => ($timestamp != null) ? $timestamp : date('c')
     );
+    $tags_expanded = is_array($tags) ? implode(',',$tags) : $tags;
     $s = curl_init();
-    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,is_array($tags) ? implode(',',$tags) : $tags)); 
+    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,$tags_expanded)); 
     curl_setopt($s, CURLOPT_HTTPHEADER,array('Expect:')); 
     curl_setopt($s, CURLOPT_TIMEOUT,$this->_timeout); 
     curl_setopt($s, CURLOPT_MAXREDIRS,2); 
