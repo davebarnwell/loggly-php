@@ -27,8 +27,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function debug($message,$data=null) {
-    return $this->loglevel(self::DEBUG,$message,$data);
+  function debug($message, $data = null) {
+    return $this->loglevel(self::DEBUG, $message, $data);
   }
 
   /**
@@ -38,8 +38,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function info($message,$data=null) {
-    return $this->loglevel(self::INFO,$message,$data);
+  function info($message, $data = null) {
+    return $this->loglevel(self::INFO, $message, $data);
   }
   
   /**
@@ -49,8 +49,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function warn($message,$data=null) {
-    return $this->loglevel(self::WARNING,$message,$data);
+  function warn($message, $data = null) {
+    return $this->loglevel(self::WARNING, $message, $data);
   }
   
   /**
@@ -60,8 +60,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function error($message,$data=null) {
-    return $this->loglevel(self::ERROR,$message,$data);
+  function error($message, $data = null) {
+    return $this->loglevel(self::ERROR, $message, $data);
   }
   
   /**
@@ -71,8 +71,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function critical($message,$data=null) {
-    return $this->loglevel(self::CRITICAL,$message,$data);
+  function critical($message, $data = null) {
+    return $this->loglevel(self::CRITICAL, $message, $data);
   }
 
   /**
@@ -82,8 +82,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function fatal($message,$data=null) {
-    return $this->loglevel(self::FATAL,$message,$data);
+  function fatal($message, $data = null) {
+    return $this->loglevel(self::FATAL, $message, $data);
   }
   
   /**
@@ -94,8 +94,8 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function loglevel($level,$message,$data=null) {
-    if (in_array($level,$this->skip_logging)) return true;  // skip levels not to log
+  function loglevel($level, $message, $data = null) {
+    if (in_array($level, $this->skip_logging)) return true; // skip levels not to log
     if (!is_array($data)) $data = array();
     $data['message']  = $message;
     $data['severity'] = $level;
@@ -121,7 +121,7 @@ class Loggly {
    * @return void
    */
   function disable($level) {
-    if (!in_array($level,$this->skip_logging)) {
+    if (!in_array($level, $this->skip_logging)) {
       $this->skip_logging[] = $level;
     }
   }
@@ -135,30 +135,34 @@ class Loggly {
   function log($data) {
     if (!is_array($data)) throw new Exception("Invalid params", 1);
     if (!isset($data['message'])) throw new Exception("No message given to log", 1);
-    $data['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : date('c');  // default timestamp if missing
+    $data['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : date('c'); // default timestamp if missing
     if (!isset($data['tags'])) {
       $tags_list = 'http';
     } else {
       if (!is_array($data['tags'])) $data['tags'] = array($data['tags']); // convert to array
-      $tags_list = implode(',',$data['tags']);
+      $tags_list = implode(',', $data['tags']);
     }
 
     $s = curl_init();
-    curl_setopt($s, CURLOPT_URL,sprintf(self::LOGURL,$this->token,$tags_list)); 
-    curl_setopt($s, CURLOPT_HTTPHEADER,array('Expect:')); 
-    curl_setopt($s, CURLOPT_TIMEOUT,$this->_timeout); 
-    curl_setopt($s, CURLOPT_MAXREDIRS,2); 
-    curl_setopt($s, CURLOPT_RETURNTRANSFER,true);
-    curl_setopt($s, CURLOPT_FOLLOWLOCATION,true);
-    curl_setopt($s, CURLOPT_POST,true);
+    curl_setopt($s, CURLOPT_URL, sprintf(self::LOGURL, $this->token, $tags_list)); 
+    curl_setopt($s, CURLOPT_HTTPHEADER, array('Expect:')); 
+    curl_setopt($s, CURLOPT_TIMEOUT, $this->_timeout); 
+    curl_setopt($s, CURLOPT_MAXREDIRS, 2); 
+    curl_setopt($s, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($s, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($s, CURLOPT_POST, true);
     curl_setopt($s, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($s, CURLOPT_HTTPHEADER, array('content-type:application/x-www-form-urlencoded')); 
     $json_string = curl_exec($s); 
-    $status = curl_getinfo($s,CURLINFO_HTTP_CODE); 
+    $status = curl_getinfo($s, CURLINFO_HTTP_CODE); 
     curl_close($s);
-    if ($status != 200) throw new Exception("Failed to log http[$status]", 1);
+    if ($status != 200) {
+      throw new Exception("Failed to log http[$status]", 1);
+    }
     $json = json_decode($json_string);
-    if (isset($json->response) && $json->response == 'ok') return true;
+    if (isset($json->response) && $json->response == 'ok') {
+      return true;
+    }
     return false;
   }
 }
