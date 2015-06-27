@@ -1,6 +1,8 @@
 loggly
 ======
 
+[![Build Status](https://scrutinizer-ci.com/g/freshsauce/loggly-php/badges/build.png?b=master)](https://scrutinizer-ci.com/g/freshsauce/loggly-php/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/freshsauce/loggly-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/freshsauce/loggly-php/?branch=master)
+
 Log to www.loggly.com HTTPS Event Endpoint in json format from PHP
 
 Usage:
