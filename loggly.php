@@ -16,7 +16,7 @@ class Loggly {
   const CRITICAL        = 'CRITICAL';
   const FATAL           = 'FATAL';
 
-  function __construct($token) {
+  public function __construct($token) {
     $this->token = $token;
   }
   
@@ -27,7 +27,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function debug($message, $data = null) {
+  public function debug($message, $data = null) {
     return $this->loglevel(self::DEBUG, $message, $data);
   }
 
@@ -38,7 +38,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function info($message, $data = null) {
+  public function info($message, $data = null) {
     return $this->loglevel(self::INFO, $message, $data);
   }
   
@@ -49,7 +49,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function warn($message, $data = null) {
+  public function warn($message, $data = null) {
     return $this->loglevel(self::WARNING, $message, $data);
   }
   
@@ -60,7 +60,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function error($message, $data = null) {
+  public function error($message, $data = null) {
     return $this->loglevel(self::ERROR, $message, $data);
   }
   
@@ -71,7 +71,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function critical($message, $data = null) {
+  public function critical($message, $data = null) {
     return $this->loglevel(self::CRITICAL, $message, $data);
   }
 
@@ -82,7 +82,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function fatal($message, $data = null) {
+  public function fatal($message, $data = null) {
     return $this->loglevel(self::FATAL, $message, $data);
   }
   
@@ -94,7 +94,7 @@ class Loggly {
    * @param array $data associative array of data to associate with message
    * @return bool
    */
-  function loglevel($level, $message, $data = null) {
+  public function loglevel($level, $message, $data = null) {
     if (in_array($level, $this->skip_logging)) return true; // skip levels not to log
     if (!is_array($data)) $data = array();
     $data['message']  = $message;
@@ -108,7 +108,7 @@ class Loggly {
    * @param string $level 
    * @return void
    */
-  function enable($level) {
+  public function enable($level) {
     if (($key = array_search($level, $this->skip_logging)) !== false) {
       unset($this->skip_logging[$key]);
     }
@@ -120,7 +120,7 @@ class Loggly {
    * @param string $level 
    * @return void
    */
-  function disable($level) {
+  public function disable($level) {
     if (!in_array($level, $this->skip_logging)) {
       $this->skip_logging[] = $level;
     }
@@ -132,7 +132,7 @@ class Loggly {
    * @param array $data associative array converted to json and sent to loggly, at minimum key 'message' should be set, optionally timestamp (ISO 8601) can be set but will default to now, and tags member is an optional array of tags to associate with the message defaults to 'http', all other data is passed through as is to loggly.
    * @return bool true on success, fale on fail, throws error if HTTP error or no message given
    */
-  function log($data) {
+  public function log($data) {
     if (!is_array($data)) throw new Exception("Invalid params", 1);
     if (!isset($data['message'])) throw new Exception("No message given to log", 1);
     $data['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : date('c'); // default timestamp if missing
